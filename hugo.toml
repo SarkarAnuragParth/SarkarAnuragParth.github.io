@@ -1,0 +1,53 @@
+baseURL = "https://sarkaranuragparth.github.io/"
+languageCode = "en-us"
+title = "Anurag Sarkar"
+theme = "hugo-profile"
+
+[params]
+  title = "Anurag Sarkar"
+  description = "ML Research Engineer"
+
+  # HERO / INTRO
+  [params.hero]
+    enable = true
+    intro = ""
+    title = "Anurag Sarkar"
+    subtitle = "ML Research Enthusiast & Engineer"
+    content = "Exploring the intricacies at the heart and probabilty and computing"
+
+  [params.font]
+    font = "Inter"
+
+  [params.singlePages]
+  socialShare = false
+
+    [params.singlePages.readTime]
+      enable = false
+      content = "min read"
+
+# Navbar: Home + 5 tabs
+[menu]
+  [[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    name = "Blogs"
+    url = "/posts/"
+    weight = 2
+  [[menu.main]]
+    name = "Experiments"
+    url = "/experiments/"
+    weight = 3
+  [[menu.main]]
+    name = "Projects"
+    url = "/projects/"
+    weight = 4
+  [[menu.main]]
+    name = "CV"
+    url = "/cv/"
+    weight = 5
+  [[menu.main]]
+    name = "Contact"
+    url = "/contact/"
+    weight = 6
