@@ -2,7 +2,9 @@
 title: "Understanding Neural Networks"
 date: 2025-01-12
 draft: false
-summary: "An intuitive approach to understanding neural networks that does not sacrifice generality "
+summary: "An intuitive approach to understanding neural networks that does not sacrifice generality"
+featured: true
+toc: false
 ---
 If you like reading tech news or articles, you've probably come across the term neural networks at some point. People love throwing this term around and treat it like a black box with the ability to perform any task, but there is much more to it. In this post, I will give an intuitive and formal explanation of neural networks. This post talks about what neural networks are, not how they are trained or why they work so well. I will dissect those concepts in later posts.
 

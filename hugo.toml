@@ -6,6 +6,7 @@ theme = "hugo-profile"
 [params]
   title = "Anurag Sarkar"
   description = "ML Research Engineer"
+  favicon = "/learning-machine-ai-icon (1).png"
 
   # HERO / INTRO
   [params.hero]
@@ -13,7 +14,24 @@ theme = "hugo-profile"
     intro = ""
     title = "Anurag Sarkar"
     subtitle = "ML Research Enthusiast & Engineer"
-    content = "Exploring the intricacies at the heart of probabilty and computing"
+    content = "Exploring the intricacies present at the heart of probabilty and computing"
+
+  # FEATURED CONTENT
+  [params.featured]
+    enable = true
+    title = "Featured Articles"
+    [[params.featured.items]]
+      title = "How Neural networks are tied to probability distributions"
+      content = "Clarifying the relation between neural networks and probability distributions"
+      link = "/posts/probability-in-nn/"
+      date = "January 12, 2025"
+  
+
+    [[params.featured.items]]
+      title = "Understanding Neural Networks"
+      content = "An intuitive approach to understanding neural networks that does not sacrifice generality"
+      link = "/posts/understanding-neural-networks/"
+      date = "January 12, 2025"
 
   [params.font]
     font = "Inter"

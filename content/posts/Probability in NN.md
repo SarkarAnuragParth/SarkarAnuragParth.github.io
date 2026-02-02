@@ -3,6 +3,10 @@ title: "How Neural networks are tied to probability distributions"
 date: 2025-01-12
 draft: false
 summary: "Clarifying the relation between neural networks and probability distributions"
+toc: false
+featured: true
+weight: 1
+mathjax: true
 ---
 
 This article will focus on exploring the relationship between probability (or, more specifically, probability distributions) and neural networks in an intuitive manner.
@@ -25,9 +29,7 @@ Our daily lives are full of random phenomena, and when faced with one, we subcon
 
 The tasks that deep learning methods solve are similar in this sense; the features do not contain sufficient information, but deep learning methods learn to assign probabilities to different outcomes from the given information. Hence, randomness is a part of everyday life, which translates to deep learning applications as well.
 
-`
 My interpretation of randomness is very loose and non-technical. There are some edge cases that do not follow this interpretation, but it would be impractical to cover them here as they serve no purpose.
-`
 
 #### Probability distributions and parameters
 Loosely speaking, probability distributions are maps that assign a probability measure to an outcome. (The probability measure of an outcome refers to the odds of that outcome occurring.) Probability distribution functions (pdf's) provide an analytical method for assigning probability measures to outcomes. Some standard distribution functions include
@@ -38,7 +40,7 @@ $$f(x \mid \mu, \sigma^2)
 = \frac{1}{\sqrt{2\pi\sigma^2}}
 \exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right),
 \qquad x \in \mathbb{R}.
-$
+$$
 
 *The Bernoulli distribution for binary variables*,
 

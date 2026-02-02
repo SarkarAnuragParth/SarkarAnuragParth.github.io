@@ -9,3 +9,5 @@ anuragsarkar574@gmail.com
 
 [LinkedIn](https://www.linkedin.com/in/anurag-sarkar-626804233)
 
+[Github](https://github.com/SarkarAnuragParth)
+

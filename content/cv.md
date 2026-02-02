@@ -6,4 +6,4 @@ showDate: false
 enableReadingTime: false
 socialShare: false
 ---
-[PDF](/AnuragSarkarResume.pdf)
+[Download PDF](/AnuragSarkarResume.pdf)
