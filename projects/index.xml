@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on Anurag Sarkar</title>
+    <link>https://sarkaranuragparth.github.io/projects/</link>
+    <description>Recent content in Projects on Anurag Sarkar</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 10 Jul 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://sarkaranuragparth.github.io/projects/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Implementing DragGAN using JAX &amp; Flax NNX</title>
+      <link>https://sarkaranuragparth.github.io/projects/implementing-draggan-using-jax--flax-nnx/</link>
+      <pubDate>Fri, 10 Jul 2026 00:00:00 +0000</pubDate>
+      <guid>https://sarkaranuragparth.github.io/projects/implementing-draggan-using-jax--flax-nnx/</guid>
+      <description>From-scratch implementation of Drag your GAN — Interactive Point-based Manipulation on the Generative Image Manifold — built in JAX and Flax NNX</description>
+    </item>
+  </channel>
+</rss>

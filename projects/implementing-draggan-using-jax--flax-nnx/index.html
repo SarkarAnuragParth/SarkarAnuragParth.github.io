@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta http-equiv="Accept-CH" content="DPR, Viewport-Width, Width">
+<link rel="icon" href=/learning-machine-ai-icon%20%281%29.png type="image/gif">
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Alata&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Alata&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      media="print" onload="this.media='all'" />
+<noscript>
+  <link
+          href="https://fonts.googleapis.com/css2?family=Alata&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+          rel="stylesheet">
+</noscript>
+
+
+<link rel="stylesheet" href="/css/font.css" media="all">
+
+
+
+<meta property="og:url" content="https://sarkaranuragparth.github.io/projects/implementing-draggan-using-jax--flax-nnx/">
+  <meta property="og:site_name" content="Anurag Sarkar">
+  <meta property="og:title" content="Implementing DragGAN using JAX & Flax NNX">
+  <meta property="og:description" content="From-scratch implementation of Drag your GAN — Interactive Point-based Manipulation on the Generative Image Manifold — built in JAX and Flax NNX">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="projects">
+    <meta property="article:published_time" content="2026-07-10T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-07-10T00:00:00+00:00">
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Implementing DragGAN using JAX & Flax NNX">
+  <meta name="twitter:description" content="From-scratch implementation of Drag your GAN — Interactive Point-based Manipulation on the Generative Image Manifold — built in JAX and Flax NNX">
+
+
+<link rel="stylesheet" href="/bootstrap-5/css/bootstrap.min.css" media="all"><link rel="stylesheet" href="/css/header.css" media="all">
+<link rel="stylesheet" href="/css/footer.css" media="all">
+
+
+<link rel="stylesheet" href="/css/theme.css" media="all">
+
+<style>
+    :root {
+        --text-color: #343a40;
+        --text-secondary-color: #6c757d;
+        --text-link-color: #007bff;
+        --background-color: #eaedf0;
+        --secondary-background-color: #64ffda1a;
+        --primary-color: #007bff;
+        --secondary-color: #f8f9fa;
+
+         
+        --text-color-dark: #e4e6eb;
+        --text-secondary-color-dark: #b0b3b8;
+        --text-link-color-dark: #ffffff;
+        --background-color-dark: #18191a;
+        --secondary-background-color-dark: #212529;
+        --primary-color-dark: #ffffff;
+        --secondary-color-dark: #212529;
+    }
+    body {
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        text-align: left;
+    }
+
+    html {
+        background-color: var(--background-color) !important;
+    }
+
+    body::-webkit-scrollbar {
+        height: 0px;
+        width: 8px;
+        background-color: var(--background-color);
+    }
+
+    ::-webkit-scrollbar-track {
+        border-radius: 1rem;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 1rem;
+        background: #b0b0b0;
+        outline: 1px solid var(--background-color);
+    }
+
+    #search-content::-webkit-scrollbar {
+        width: .5em;
+        height: .1em;
+        background-color: var(--background-color);
+    }
+</style>
+
+
+
+<meta name="description" content="">
+<link rel="stylesheet" href="/css/single.css">
+
+
+<script defer src="/fontawesome-6/all-6.4.2.js"></script>
+
+
+  
+  
+
+  <title>
+Implementing DragGAN using JAX &amp; Flax NNX | Anurag Sarkar
+
+  </title>
+</head>
+
+<body class="light">
+  
+  
+<script>
+    let localStorageValue = localStorage.getItem("pref-theme");
+    let mediaQuery = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    switch (localStorageValue) {
+        case "dark":
+            document.documentElement.classList.add('dark');
+            document.body.classList.add('dark');
+            break;
+        case "light":
+            document.body.classList.remove('dark');
+            document.documentElement.classList.remove('dark');
+            break;
+        default:
+            if (mediaQuery) {
+                document.documentElement.classList.add('dark');
+                document.body.classList.add('dark');
+            }
+            break;
+    }
+</script>
+
+
+
+
+
+<header id="profileHeader">
+    <nav class="pt-3 navbar navbar-expand-lg ">
+        <div class="container-fluid mx-xs-2 mx-sm-5 mx-md-5 mx-lg-5">
+            
+            <a class="navbar-brand primary-font text-wrap" href="/">
+                
+                <img src="/learning-machine-ai-icon%20%281%29.png" width="30" height="30"
+                    class="d-inline-block align-top">
+                Anurag Sarkar
+                
+            </a>
+
+            
+                <div>
+    <input id="search" autocomplete="off" class="form-control mr-sm-2 d-none d-md-block" 
+        style="font-family: 'Inter', sans-serif;"
+        placeholder='Search'
+        aria-label="Search" oninput="searchOnChange(event)">
+</div>
+            
+
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <svg aria-hidden="true" height="24" viewBox="0 0 16 16" version="1.1" width="24" data-view-component="true">
+                    <path fill-rule="evenodd" d="M1 2.75A.75.75 0 011.75 2h12.5a.75.75 0 110 1.5H1.75A.75.75 0 011 2.75zm0 5A.75.75 0 011.75 7h12.5a.75.75 0 110 1.5H1.75A.75.75 0 011 7.75zM1.75 12a.75.75 0 100 1.5h12.5a.75.75 0 100-1.5H1.75z"></path>
+                </svg>
+            </button>
+
+            
+            <div class="collapse navbar-collapse text-wrap primary-font" id="navbarContent">
+                <ul class="navbar-nav ms-auto text-center">
+                    
+                        <li class="nav-item navbar-text d-block d-md-none">
+                            <div class="nav-link">
+                                <input id="search" autocomplete="off" class="form-control mr-sm-2" placeholder='Search' aria-label="Search" oninput="searchOnChange(event)">
+                            </div>
+                        </li>
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+                    
+                    
+                    
+                    <li class="nav-item navbar-text">
+                        <a class="nav-link" href="/" title="">
+                            
+                            Home
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li class="nav-item navbar-text">
+                        <a class="nav-link" href="/posts/" title="">
+                            
+                            Blogs
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li class="nav-item navbar-text">
+                        <a class="nav-link" href="/experiments/" title="">
+                            
+                            Experiments
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li class="nav-item navbar-text">
+                        <a class="nav-link" href="/projects/" title="">
+                            
+                            Projects
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li class="nav-item navbar-text">
+                        <a class="nav-link" href="/cv/" title="">
+                            
+                            CV
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li class="nav-item navbar-text">
+                        <a class="nav-link" href="/contact/" title="">
+                            
+                            Contact
+                        </a>
+                    </li>
+                    
+                    
+
+                    
+                    <li class="nav-item navbar-text">
+                        
+                        <div class="text-center">
+                            <button id="theme-toggle">
+                                <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                </svg>
+                                <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="5"></circle>
+                                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </li>
+                    
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+</header>
+<div id="content">
+<section id="single">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-sm-12 col-md-12 col-lg-9">
+        <div class="pr-lg-4">
+          <div class="title mb-5">
+            <h1 class="text-center mb-4">Implementing DragGAN using JAX &amp; Flax NNX</h1>
+            <div class="text-center">
+              
+              
+              Jul 10, 2026
+              
+
+              
+            </div>
+          </div>
+          
+          <div class="featured-image">
+            <img class="img-fluid mx-auto d-block" src="/images/projects/cover_image.png" alt="Implementing DragGAN using JAX &amp; Flax NNX">
+          </div>
+          
+          <article class="page-content  p-2">
+          <p><em>I have never used the JAX framework before but wanted to learn it. So I decided to read the <a href="https://arxiv.org/pdf/2305.10973">DragGAN paper</a> and implement it using JAX and Flax NNX. This post will cover a high-level overview of DragGAN, things I found interesting about the JAX framework, analysis of my implementation, experiments and corresponding findings. I will not cover implementation details here, you can go through the repository, and my <strong><a href="/posts/implementation-experience-and-thought-process---draggan-flax/">thought dump</a></strong> for that</em></p>
+<p><a href="https://github.com/SarkarAnuragParth/DragGAN-Flax"><img src="https://img.shields.io/badge/github-repo-blue?logo=github" alt="GitHub"></a></p>
+<hr>
+<h2 id="understanding-draggan">Understanding DragGAN</h2>
+<p><em>(For those already familiar with this topic, feel free to skip this section)</em></p>
+<p>You can imagine DragGAN as a tool that lets you use your cursor to drag one point in an image to the other, and when I say &ldquo;drag,&rdquo; I don&rsquo;t mean that wonky Photoshop-type of dragging that stretches/compresses the subject. I mean a semantically preserved, faithful manipulation of the image. For example, let&rsquo;s say we have a smiling kid. If I don&rsquo;t want the kid to smile anymore, I could tell him Santa is not real and make fun of his hair. However, social norms say such behaviour is wrong. So instead I would take a photo of the child&rsquo;s face (with the parent&rsquo;s consent ofcourse), go back to my laptop, upload the photo, and drag certain points like so:</p>
+<p><img src="/images/projects/smiling_kid.jpg" alt="Smiling kid"></p>
+<p>DragGAN would then apply a transformation to give an image like:</p>
+<p><img src="/images/projects/smile_gone.jpg" alt="Smile Gone"></p>
+<p>And viola! A totally socially acceptable way to make a kid&rsquo;s smile disappear. Jokes aside, DragGAN allows you to perform many such manipulations; closing the eyes in image of a human face, changing the size of the wheel in the image of a car; you could perform endless transformations at a high semantic level. We will henceforth refer to these transformations as pointwise manipulations.
+Now how does DragGAN achieve this? The authors have already given a detailed and technical explanation on how <em>it is able to do this</em>, but I like to think about it through a more high-level perspective because, to me, DragGAN elegantly utilises one of my favourite concepts in machine learning, the <em><a href="https://en.wikipedia.org/wiki/Manifold_hypothesis">manifold hypothesis.</a></em></p>
+<h3 id="how-draggan-uses-the-manifold">How DragGAN uses the manifold</h3>
+<p>The manifold hypothesis states that almost all naturally occuring high-dimensional datasets lie along low-dimensional manifolds. As a result of this, high-dimensional data points can be faithfully represented (and explained) by a lower dimensional structure, allowing ML algorithms to learn abstract relevant features from high-dimensional data.
+In our case, the dataset is all naturally occuring images. As per the manifold hypothesis, we can represent every naturally occurring image using a low dimensional structure. StyleGAN already does this, it samples from a normal distribution <em>z</em>, passes it through the mapping network to get the disentangled latent code <em>w</em>, and then  passes that through a generator to get the image (For a quick primer on StyleGAN you can go through this <a href="https://machinelearningmastery.com/introduction-to-style-generative-adversarial-network-stylegan/">article</a>). This disentangled latent code <em>w</em> is exactly the low-dimensional structure that represents high quality images. (An argument can be made that it is in fact <em>z</em> and not <em>w</em> that is a representation of the image. This claim could be valid, but assuming a bijective mapping between <em>Z</em> and <em>W</em>, this technicality does not really change anything).</p>
+<p>I like to thing of the disentangled latent code as the coordinates of that specific image on the manifold. Changing this coordinate in a specific direction changes a particular attribute of the image. For example, I have an image of a bearded man and its corresponding disentangled latent code (<em>w</em> code for shorthand), if I drag the <em>w</em> code along a certain direction on the manifold, the man&rsquo;s beard in the image could become denser and if I drag it in the opposite direction along the same axis, the beard could become sparser. However, I need to be careful to stay on the manifold, because if I go out, the image would completely lose structure and essentialy become noise.</p>
+<p>DragGAN does exactly this. Through numerous small precise updates to the <em>w</em> code, it drags an image across the manifold until it gets to the target image.</p>
+<p><em>If you would like a more detailed explanation of DragGAN, I encourage you to read the <a href="https://arxiv.org/pdf/2305.10973">paper</a></em></p>
+<hr>
+<h2 id="jax">JAX</h2>
+<p>I&rsquo;ll keep this short. JAX is Google&rsquo;s recent framework for high-performance array computation. Its enforces the functional programming paradigm, and supports a stack of additional libraries for writing, training and testing machine learning algorithms and large-scale models. It offers enough functionalities to be an enticing alternative to PyTorch, and its interface is one of the most intuitive that I have seen so far.</p>
+<p>JAX also offers Flax, a framework for developing ML models, supporting jax operations as well. As JAX enforces functional purity, Flax is a useful tool for implicit state management when working with stateful models.</p>
+<p>JAX supports using Just In Time (JIT) compilation to accelerate your code. You can flexibly choose what specific function you want to accelerate using JIT, and while there are limitations on what kind of code you can write for a jitted function, JAX offers multiple workarounds for it. JIT compilation is achieved by tracing the function on first use and optimising it using XLA (Accelerated Linear Algebra).</p>
+<hr>
+<h2 id="implementation-experience">Implementation experience</h2>
+<p>The name DragGAN makes you think that implementation consists of writing and training a model, but that is not the case. DraGAN is simply an algorithm that operates on top of the StyleGAN-2 generator, and this algorithm does not update the generator weights, but rather the input to the generator (w_code). Here&rsquo;s a short version of the algorithm</p>
+<ol>
+<li>We get an image along with it&rsquo;s corresponding <em>w</em> code from StyleGAN</li>
+<li>The user picks handle point <code>p</code> and target point <code>t</code></li>
+<li>Using motion supervised patch loss, the <em>w</em> code is changed, so that the resuting image is slightly changed in desired way.</li>
+<li>Use point-tracking algorithm to capture the new handle point <code>p</code></li>
+<li>Go to step 3, until the condition of <code>p~=t</code> is satisfied</li>
+</ol>
+<p>Implementing this algorithm in JAX was fairly straightforward, you can check my implementation journey <a href="/posts/implementation-experience-and-thought-process---draggan-flax/">here</a>. The jax.numpy module (which is a mirror of the numpy module but JAX compatible) was a huge help in implementing complex mathematical operations and array computations, and I feel like any programmer with some experience in Python would feel familiar with the JAX interface right off the bat.</p>
+<p>Even in the case of DragGAN, where the optimisation is for the w_code rather than the weights, writing the optimisation step was simple and uncomplicated. I will admit that I was confused when trying to use the Adam optimizer from Optax module, as Optax implements the state of the optimiser seperately from its structure. However once I understood that, the confusion was quickly cleared up.</p>
+<p>Acceleration was easy to implement thanks to the JIT decorators provided by JAX, which allowed me to selectively accelerate any functions, and customize the acceleration parameters as well. All in all, great experience, I cannot give a rating based on one experience, but I look forward to using JAX in future projects.</p>
+<hr>
+<h2 id="results">Results</h2>
+<p>Implementing it was the easy part; figuring out why I was getting skewed results was more frustrating. I performed multiple experiments on images from multiple datasets, finding several that work and some that don&rsquo;t. The biggest problems that I noticed amount to the following—</p>
+<ol>
+<li>The point-tracking algorithm too often caused the handle point to drift away from that actual feature that it is supposed to be tracking, leading to bad updates</li>
+<li>The heuristics given by the authors (Take the 6th block of the generator as the feature block, update only the first 6 layers of W+) don&rsquo;t seem to apply effectively for every image. While performing an abltaion study, I sometimes noticed that updating only first 4 layers yielded better results, while sometime using the 7th feature block had better success. I suppose it is because specific features are more predominant in specific blocks. As a follow-up, I would like to study the feature maps of StyleGAN-2, and try to determine a way to see which feature is more active in which block.</li>
+</ol>
+<p>I first verified that my code was not flawed and not causing this drift, after which I tried various solutions from hyperparameter tuning to modifying the algorithm. The two main things I tried and which failed were:</p>
+<ol>
+<li>Giving more preference to the original point and the points around it, to encourage point-tracking to stick close to the original point, and only pick another point if there is a strong likelihood</li>
+<li>Updating the reference point on every iteration using an exponential averaging formula.</li>
+</ol>
+<p>It turns out this problem is a documented limitation, called &lsquo;ambiguous tracking&rsquo;, and there have been follow up papers to adress this limitation. One of the papers employed a &lsquo;self-updating reference point&rsquo;, which was similar to what I tried, but they employed dynamic weights for the exponential averaging. They also restricted the point-tracking algorithm to only search for points in the 1d line connecting the handle point and target point.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Image</th>
+          <th><img src="/images/projects/point_tracking/1.jpg" alt=""></th>
+          <th><img src="/images/projects/point_tracking/100.jpg" alt=""></th>
+          <th><img src="/images/projects/point_tracking/197.jpg" alt=""></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Iteration</td>
+          <td>1</td>
+          <td>100</td>
+          <td>197</td>
+      </tr>
+  </tbody>
+</table>
+<div align="center"><i>Progression of an image through multiple drag iterations. You can see the handle point drifting away from the nose - the feature which it is supposed to be tracking, and coverging to the target point without moving the required feature</i></div>
+<br>
+<p>I think there might be an easier or more elegant solution to solving point-tracking. The authors had the correct intuition, but this algorithm requires stricter constraints and more robust hyperparameters.
+Its also a very real possibility that the StyleGAN weights which I used were not upto the mark, although the <a href="https://github.com/matthias-wright/flaxmodels/tree/main/flaxmodels/stylegan2">source</a> I obtained it from, mentioned that they used NVIDIA&rsquo;s official weights (<a href="https://github.com/matthias-wright/flaxmodels/blob/main/docs/Documentation.md#11-preprocessing">link</a>).</p>
+<p>On the subject of speed, I tested my algorithm on the NVIDIA Tesla T4 GPU, and depending on how far the target point is from the handle point, a drag loop took anwhere from 20 seconds to 5 minutes. To speed it up further, I plan to write kernels for the StyleGAN generator, and I will see how it goes.</p>
+<p>Now we will visualize the results across different configurations, showcasing how DragGAN&rsquo;s performance varies with different subjects and hyperparameters. The two main hyperparameters I am interested in are the feature block used from the generator in the patch loss and point-tracking algorithm, and the number of layers in W+ that can be updated. I might add some qualititive analysis for each result I display.</p>
+<hr>
+<p><strong>Result 1</strong>: Pointwise manipulation of a car - Elongation and flattening</p>
+<p>Original image:  <img src="/images/projects/car/Original_image.jpg" alt=""></p>
+<p>(Red illustrates the handle point, blue illustrates the target point)</p>
+<table>
+  <thead>
+      <tr>
+          <th><img src="/images/projects/index.png" alt=""></th>
+          <th><strong>4</strong></th>
+          <th><strong>5</strong></th>
+          <th><strong>6</strong></th>
+          <th><strong>7</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>4</strong></td>
+          <td><img src="/images/projects/car/image_4_4.jpg" alt=""></td>
+          <td><img src="/images/projects/car/image_4_5.jpg" alt=""></td>
+          <td><img src="/images/projects/car/image_4_6.jpg" alt=""></td>
+          <td><img src="/images/projects/car/image_4_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>5</strong></td>
+          <td><img src="/images/projects/car/image_5_4.jpg" alt=""></td>
+          <td><img src="/images/projects/car/image_5_5.jpg" alt=""></td>
+          <td><img src="/images/projects/car/image_5_6.jpg" alt=""></td>
+          <td><img src="/images/projects/car/image_5_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>6</strong></td>
+          <td><img src="/images/projects/car/image_6_4.jpg" alt=""></td>
+          <td><img src="/images/projects/car/image_6_5.jpg" alt=""></td>
+          <td><img src="/images/projects/car/image_6_6.jpg" alt=""></td>
+          <td><img src="/images/projects/car/image_6_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>7</strong></td>
+          <td><img src="/images/projects/car/image_7_4.jpg" alt=""></td>
+          <td><img src="/images/projects/car/image_7_5.jpg" alt=""></td>
+          <td><img src="/images/projects/car/image_7_6.jpg" alt=""></td>
+          <td><img src="/images/projects/car/image_7_7.jpg" alt=""></td>
+      </tr>
+  </tbody>
+</table>
+<p>Now over here, the author&rsquo;s heuristic of 6th feature block and 6th W+ layer performs great, although you will notice the same for 6_7 (6th feature block and 7th W+ layer). The goal was to flatten and slightly elongate the car. When using the 4th feature block, the background completely changed. I dont even want to touch on what happened in all the 5_x, thats horrible to look at. The 6th feature block perform well when later layers are allowed to update, and the 7th feature block&hellip; managed to turn the entire car around.</p>
+<hr>
+<p><strong>Result 2</strong>: Pointwise manipulation of a person - Changing face shape</p>
+<p>Original image: <img src="/images/projects/ffhq_face_shape_change/Original_image.jpg" alt=""></p>
+<table>
+  <thead>
+      <tr>
+          <th><img src="/images/projects/index.png" alt=""></th>
+          <th><strong>4</strong></th>
+          <th><strong>5</strong></th>
+          <th><strong>6</strong></th>
+          <th><strong>7</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>4</strong></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_4_4.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_4_5.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_4_6.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_4_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>5</strong></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_5_4.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_5_5.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_5_6.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_5_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>6</strong></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_6_4.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_6_5.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_6_6.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_6_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>7</strong></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_7_4.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_7_5.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_7_6.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_face_shape_change/image_7_7.jpg" alt=""></td>
+      </tr>
+  </tbody>
+</table>
+<p>Ok I just want to specify, I do not mean to push any subtle body-shaming agenda, I am simply trying to slim this man&rsquo;s face via my algorithm to understand it&rsquo;s performance. The man is entirely imaginary, I am sure no feeling were hurt. Onto the analysis, the results here are interesting because if you see, all the images manipulated with 4th feature block accomplish the teask well, and as the feature block progresses the performance worsens. The 6th feature block images fail to achieve the task but for some reason make him balder (6_5) or fix his hairline (6_4). The 7th feature block changes his face completely and 7_7 somehow introduces a new concept model for <a href="https://en.wikipedia.org/wiki/Two-Face">Two-Face</a>.</p>
+<p>This result also illustrates that point-tracking performs better with the 4th feature block. From these observations, one could theorize that the information about this person&rsquo;s face shape lies in the 4th feature block, a fact that can be leveraged for further analysis.</p>
+<hr>
+<p><strong>Result 3</strong>: Pointwise manipulation of a dog - Flip that ear!</p>
+<p>Original image: <img src="/images/projects/afhqdog_ear_flip/Original_image.jpg" alt=""></p>
+<table>
+  <thead>
+      <tr>
+          <th><img src="/images/projects/index.png" alt=""></th>
+          <th><strong>4</strong></th>
+          <th><strong>5</strong></th>
+          <th><strong>6</strong></th>
+          <th><strong>7</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>4</strong></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_4_4.jpg" alt=""></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_4_5.jpg" alt=""></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_4_6.jpg" alt=""></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_4_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>5</strong></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_5_4.jpg" alt=""></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_5_5.jpg" alt=""></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_5_6.jpg" alt=""></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_5_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>6</strong></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_6_4.jpg" alt=""></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_6_5.jpg" alt=""></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_6_6.jpg" alt=""></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_6_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>7</strong></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_7_4.jpg" alt=""></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_7_5.jpg" alt=""></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_7_6.jpg" alt=""></td>
+          <td><img src="/images/projects/afhqdog_ear_flip/image_7_7.jpg" alt=""></td>
+      </tr>
+  </tbody>
+</table>
+<p>The results are fairly varied here, I think 4_7 and 6_5 are the best performers here, although they have made slight alterations to the dog&rsquo;s face, but thats also on me. If I had created a mask which only prioritised the ear, this probably wouldnt have happened. I also find it interesting how the performance is not simply isloated to the feature block but also to the number of layers that are updated. I dont see how we can devise a method to make both configurable, but maybe its possible to fix one and optimize the other accordingly?</p>
+<hr>
+<p><strong>Result 4</strong>: Pointwise manipulation of a person - Lengthening the bangs</p>
+<p>Original image: <img src="/images/projects/ffhq_woman_hair_down/masked_original_image.jpg" alt=""></p>
+<p>The transluscent white mask you see in the image above is infact a binary mask given to DragGAN, helping it penalise any changes outside the mask.</p>
+<table>
+  <thead>
+      <tr>
+          <th><img src="/images/projects/index.png" alt=""></th>
+          <th><strong>4</strong></th>
+          <th><strong>5</strong></th>
+          <th><strong>6</strong></th>
+          <th><strong>7</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>4</strong></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_4_4.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_4_5.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_4_6.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_4_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>5</strong></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_5_4.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_5_5.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_5_6.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_5_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>6</strong></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_6_4.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_6_5.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_6_6.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_6_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>7</strong></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_7_4.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_7_5.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_7_6.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_woman_hair_down/image_7_7.jpg" alt=""></td>
+      </tr>
+  </tbody>
+</table>
+<p>Rendering hair can be tricky, its a coarse feature overall but the fine texture means that fine-grained features are required to get realistic rendering. As you can see from 4_x images, they bring down a clump of hair, while the 6_x images make it a bit more subtle. All of the configurations bring the hair down, but still change the face shape, expression or pose in-spite of a mask.  I think 6_4 gives the best output here, but even this makes the person look to the right a bit. However, this can be explained via another experiment, where I slightly nudge the w_code of the image by incrementing the truncation psi (See truncation trick <em><a href="https://ankittaxak5713.medium.com/style-gan-2108a3a4714a">here</a></em>).</p>
+<table>
+  <thead>
+      <tr>
+          <th>Image</th>
+          <th><img src="/images/projects/trunc_diff/0.7.jpg" alt=""></th>
+          <th><img src="/images/projects/trunc_diff/0.8.jpg" alt=""></th>
+          <th><img src="/images/projects/trunc_diff/0.9.jpg" alt=""></th>
+          <th><img src="/images/projects/trunc_diff/1.0.jpg" alt=""></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Truncation psi</td>
+          <td>0.7</td>
+          <td>0.8</td>
+          <td>0.9</td>
+          <td>1.0</td>
+      </tr>
+  </tbody>
+</table>
+<p>Slight nudges in w_code make the person change their pose, leading to the inconsistency you see in the images. Adding a regularisation loss that pulls the w_code slightly towards w_avg would probably help here, but how it would affect the algorithm as a whole I do not know.</p>
+<hr>
+<p><strong>Result 5</strong>: Failure analysis - Making a person smile</p>
+<p>Original image: <img src="/images/projects/ffhq_man_smile/Original_image.jpg" alt=""></p>
+<table>
+  <thead>
+      <tr>
+          <th><img src="/images/projects/index.png" alt=""></th>
+          <th><strong>4</strong></th>
+          <th><strong>5</strong></th>
+          <th><strong>6</strong></th>
+          <th><strong>7</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>4</strong></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_4_4.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_4_5.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_4_6.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_4_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>5</strong></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_5_4.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_5_5.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_5_6.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_5_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>6</strong></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_6_4.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_6_5.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_6_6.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_6_7.jpg" alt=""></td>
+      </tr>
+      <tr>
+          <td><strong>7</strong></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_7_4.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_7_5.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_7_6.jpg" alt=""></td>
+          <td><img src="/images/projects/ffhq_man_smile/image_7_7.jpg" alt=""></td>
+      </tr>
+  </tbody>
+</table>
+<p>Complete miss. Maybe its because I placed the points a little too inside the lips and the algorithm was unable to  understand how to move those points outward. So the patch loss is unable to move the lip in that direction, probably because the manifold does not support images of men with wierd smiles, so instead it changes the area around the lips which consequently changes the entire face structure. Notice how each handle point has converged to the target point even if the actual feature is not at the target point. So the w_code changed such that the feature values travelled towards the target point, but the actual feature did not move at all. I actually cannot think of an explanation for this. Point-tracking does not apply a penalty to the w_code, how could the algorithm faithfully nudge the w_code to move the feature from the handle point to the target point, but not affect the feature at all? Is it an absence of stochasticty perhaps? You&rsquo;ll see that in all the results the face shape, expression, and other features we were not targeting have been changed. It could also be that the point-tracking algorithm is inherently flawed as we discussed, and it was by random chance that it matched a nearest neighbour, but it does not explain how the handle point converged to target point in each case. I did not put any constraints on point-tracking for this experiment.</p>
+<hr>
+<h2 id="conclusion">Conclusion</h2>
+<p>The main goal of this project was to learn the JAX framework, which I think I have achieved. Ofcourse, &lsquo;knowing&rsquo; a framework has a very loose meaning. Obviously I cannot claim knowledge to every method in this framework or even know how the internals work, but I understood the paradigm it utilizes and how to use it effectively, and I&rsquo;ll learn the rest as I use it more. Coming to the subject of DragGAN, as discussed above there were many things left to be analysed and refined, and there is potential to improve upon the original algorithm. It is also possible that the discrepancies I notices may be due to mistakes in my implementation. If so, please point it out to me. Obviously there is so much more to analyse and so much more to improve, but I wanted to post this article as a milestone, and a reminder of the work yet to be done.</p>
+<br>
+<h2 id="future-work">Future Work</h2>
+<ol>
+<li>Implement grid tracking rather than point-tracking</li>
+<li>Write a kernel to improve speed</li>
+<li>Use the official PyTorch StyleGAN-2 model and port it to JAX for use. Also try using the StyleGAN-3 model.</li>
+<li>Analyse feature maps</li>
+</ol>
+<hr>
+<h2 id="references">References</h2>
+<ol>
+<li><a href="https://arxiv.org/pdf/2305.10973">DragGAN paper</a></li>
+<li><a href="https://docs.jax.dev/en/latest/notebooks/thinking_in_jax.html">JAX documentation</a></li>
+<li><a href="https://github.com/matthias-wright/flaxmodels">flaxmodels - GitHub</a></li>
+</ol>
+
+          </article>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-12 col-lg-3">
+        <div id="stickySideBar" class="sticky-sidebar">
+          
+          <aside class="toc">
+              <h5>
+                Table Of Contents
+              </h5>
+              <div class="toc-content">
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#understanding-draggan">Understanding DragGAN</a>
+      <ul>
+        <li><a href="#how-draggan-uses-the-manifold">How DragGAN uses the manifold</a></li>
+      </ul>
+    </li>
+    <li><a href="#jax">JAX</a></li>
+    <li><a href="#implementation-experience">Implementation experience</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#future-work">Future Work</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+              </div>
+          </aside>
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-12 col-lg-9 p-4">
+        
+      </div>
+    </div>
+  </div>
+  <button class="p-2 px-3" onclick="topFunction()" id="topScroll">
+    <i class="fas fa-angle-up"></i>
+  </button>
+</section>
+
+
+<div class="progress">
+  <div id="scroll-progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+<Script src="/js/scrollProgressBar.js"></script>
+
+
+<script>
+  var topScroll = document.getElementById("topScroll");
+  window.onscroll = function() {scrollFunction()};
+
+  function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      topScroll.style.display = "block";
+    } else {
+      topScroll.style.display = "none";
+    }
+  }
+
+  function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
+
+  
+  let stickySideBarElem = document.getElementById("stickySideBar");
+  let stickyNavBar =  false ;
+  if(stickyNavBar) {
+    let headerElem = document.getElementById("profileHeader");
+    let headerHeight = headerElem.offsetHeight + 15;
+    stickySideBarElem.style.top = headerHeight + "px";
+  } else {
+    stickySideBarElem.style.top = "50px";
+  }
+</script>
+
+
+
+
+  </div><footer>
+    
+ 
+
+<div class="text-center pt-2">
+    
+
+    
+
+    
+
+    
+
+    
+</div></footer><script src="/bootstrap-5/js/bootstrap.bundle.min.js"></script>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+        document.documentElement.classList.remove('dark');
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('dark');
+    }
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            document.documentElement.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
+</script>
+
+
+    <script src="/js/search.js"></script>
+
+
+
+
+
+<!-- MathJax -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" integrity="sha384-M5jmNxKC9EVnuqeMwRHvFuYUE8Hhp0TgBruj/GZRkYtiMrCRgH7yvv5KY+Owi7TW" crossorigin="anonymous"></script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\[','\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+        TeX: { equationNumbers: { autoNumber: "AMS" },
+             extensions: ["AMSmath.js", "AMSsymbols.js"] }
+      }
+    });
+</script>
+
+
+
+
+
+
+
+
+  <section id="search-content" class="py-2">
+    <div class="container" id="search-results"></div>
+  </section>
+</body>
+
+</html>

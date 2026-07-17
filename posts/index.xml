@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Anurag Sarkar</title>
+    <link>https://sarkaranuragparth.github.io/posts/</link>
+    <description>Recent content in Posts on Anurag Sarkar</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 08 Jul 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://sarkaranuragparth.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Implementation Experience and Thought Process - DragGAN</title>
+      <link>https://sarkaranuragparth.github.io/posts/implementation-experience-and-thought-process---draggan-flax/</link>
+      <pubDate>Wed, 08 Jul 2026 00:00:00 +0000</pubDate>
+      <guid>https://sarkaranuragparth.github.io/posts/implementation-experience-and-thought-process---draggan-flax/</guid>
+      <description>Clarifying the relation between neural networks and probability distributions</description>
+    </item>
+    <item>
+      <title>How Neural networks are tied to probability distributions</title>
+      <link>https://sarkaranuragparth.github.io/posts/probability-in-nn/</link>
+      <pubDate>Sun, 12 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>https://sarkaranuragparth.github.io/posts/probability-in-nn/</guid>
+      <description>Clarifying the relation between neural networks and probability distributions</description>
+    </item>
+    <item>
+      <title>Understanding Neural Networks</title>
+      <link>https://sarkaranuragparth.github.io/posts/understanding-neural-networks/</link>
+      <pubDate>Sun, 12 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>https://sarkaranuragparth.github.io/posts/understanding-neural-networks/</guid>
+      <description>An intuitive approach to understanding neural networks that does not sacrifice generality</description>
+    </item>
+  </channel>
+</rss>

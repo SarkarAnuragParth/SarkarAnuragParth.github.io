@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta http-equiv="Accept-CH" content="DPR, Viewport-Width, Width">
+<link rel="icon" href=/learning-machine-ai-icon%20%281%29.png type="image/gif">
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Alata&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Alata&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      media="print" onload="this.media='all'" />
+<noscript>
+  <link
+          href="https://fonts.googleapis.com/css2?family=Alata&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+          rel="stylesheet">
+</noscript>
+
+
+<link rel="stylesheet" href="/css/font.css" media="all">
+
+
+
+<meta property="og:url" content="https://sarkaranuragparth.github.io/posts/implementation-experience-and-thought-process---draggan-flax/">
+  <meta property="og:site_name" content="Anurag Sarkar">
+  <meta property="og:title" content="Implementation Experience and Thought Process - DragGAN">
+  <meta property="og:description" content="Clarifying the relation between neural networks and probability distributions">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-07-08T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-07-08T00:00:00+00:00">
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Implementation Experience and Thought Process - DragGAN">
+  <meta name="twitter:description" content="Clarifying the relation between neural networks and probability distributions">
+
+
+<link rel="stylesheet" href="/bootstrap-5/css/bootstrap.min.css" media="all"><link rel="stylesheet" href="/css/header.css" media="all">
+<link rel="stylesheet" href="/css/footer.css" media="all">
+
+
+<link rel="stylesheet" href="/css/theme.css" media="all">
+
+<style>
+    :root {
+        --text-color: #343a40;
+        --text-secondary-color: #6c757d;
+        --text-link-color: #007bff;
+        --background-color: #eaedf0;
+        --secondary-background-color: #64ffda1a;
+        --primary-color: #007bff;
+        --secondary-color: #f8f9fa;
+
+         
+        --text-color-dark: #e4e6eb;
+        --text-secondary-color-dark: #b0b3b8;
+        --text-link-color-dark: #ffffff;
+        --background-color-dark: #18191a;
+        --secondary-background-color-dark: #212529;
+        --primary-color-dark: #ffffff;
+        --secondary-color-dark: #212529;
+    }
+    body {
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        text-align: left;
+    }
+
+    html {
+        background-color: var(--background-color) !important;
+    }
+
+    body::-webkit-scrollbar {
+        height: 0px;
+        width: 8px;
+        background-color: var(--background-color);
+    }
+
+    ::-webkit-scrollbar-track {
+        border-radius: 1rem;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 1rem;
+        background: #b0b0b0;
+        outline: 1px solid var(--background-color);
+    }
+
+    #search-content::-webkit-scrollbar {
+        width: .5em;
+        height: .1em;
+        background-color: var(--background-color);
+    }
+</style>
+
+
+
+<meta name="description" content="">
+<link rel="stylesheet" href="/css/single.css">
+
+
+<script defer src="/fontawesome-6/all-6.4.2.js"></script>
+
+
+  
+  
+
+  <title>
+Implementation Experience and Thought Process - DragGAN | Anurag Sarkar
+
+  </title>
+</head>
+
+<body class="light">
+  
+  
+<script>
+    let localStorageValue = localStorage.getItem("pref-theme");
+    let mediaQuery = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    switch (localStorageValue) {
+        case "dark":
+            document.documentElement.classList.add('dark');
+            document.body.classList.add('dark');
+            break;
+        case "light":
+            document.body.classList.remove('dark');
+            document.documentElement.classList.remove('dark');
+            break;
+        default:
+            if (mediaQuery) {
+                document.documentElement.classList.add('dark');
+                document.body.classList.add('dark');
+            }
+            break;
+    }
+</script>
+
+
+
+
+
+<header id="profileHeader">
+    <nav class="pt-3 navbar navbar-expand-lg ">
+        <div class="container-fluid mx-xs-2 mx-sm-5 mx-md-5 mx-lg-5">
+            
+            <a class="navbar-brand primary-font text-wrap" href="/">
+                
+                <img src="/learning-machine-ai-icon%20%281%29.png" width="30" height="30"
+                    class="d-inline-block align-top">
+                Anurag Sarkar
+                
+            </a>
+
+            
+                <div>
+    <input id="search" autocomplete="off" class="form-control mr-sm-2 d-none d-md-block" 
+        style="font-family: 'Inter', sans-serif;"
+        placeholder='Search'
+        aria-label="Search" oninput="searchOnChange(event)">
+</div>
+            
+
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <svg aria-hidden="true" height="24" viewBox="0 0 16 16" version="1.1" width="24" data-view-component="true">
+                    <path fill-rule="evenodd" d="M1 2.75A.75.75 0 011.75 2h12.5a.75.75 0 110 1.5H1.75A.75.75 0 011 2.75zm0 5A.75.75 0 011.75 7h12.5a.75.75 0 110 1.5H1.75A.75.75 0 011 7.75zM1.75 12a.75.75 0 100 1.5h12.5a.75.75 0 100-1.5H1.75z"></path>
+                </svg>
+            </button>
+
+            
+            <div class="collapse navbar-collapse text-wrap primary-font" id="navbarContent">
+                <ul class="navbar-nav ms-auto text-center">
+                    
+                        <li class="nav-item navbar-text d-block d-md-none">
+                            <div class="nav-link">
+                                <input id="search" autocomplete="off" class="form-control mr-sm-2" placeholder='Search' aria-label="Search" oninput="searchOnChange(event)">
+                            </div>
+                        </li>
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+                    
+                    
+                    
+                    <li class="nav-item navbar-text">
+                        <a class="nav-link" href="/" title="">
+                            
+                            Home
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li class="nav-item navbar-text">
+                        <a class="nav-link" href="/posts/" title="">
+                            
+                            Blogs
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li class="nav-item navbar-text">
+                        <a class="nav-link" href="/experiments/" title="">
+                            
+                            Experiments
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li class="nav-item navbar-text">
+                        <a class="nav-link" href="/projects/" title="">
+                            
+                            Projects
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li class="nav-item navbar-text">
+                        <a class="nav-link" href="/cv/" title="">
+                            
+                            CV
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li class="nav-item navbar-text">
+                        <a class="nav-link" href="/contact/" title="">
+                            
+                            Contact
+                        </a>
+                    </li>
+                    
+                    
+
+                    
+                    <li class="nav-item navbar-text">
+                        
+                        <div class="text-center">
+                            <button id="theme-toggle">
+                                <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                </svg>
+                                <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="5"></circle>
+                                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </li>
+                    
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+</header>
+<div id="content">
+<section id="single">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-sm-12 col-md-12 col-lg-9">
+        <div class="pr-lg-4">
+          <div class="title mb-5">
+            <h1 class="text-center mb-4">Implementation Experience and Thought Process - DragGAN</h1>
+            <div class="text-center">
+              
+              
+              Jul 8, 2026
+              
+
+              
+            </div>
+          </div>
+          
+          <article class="page-content  p-2">
+          <h2 id="start">Start</h2>
+<p>The objective is to code dragGan in JAX. Need to check feasibility, acceleration opportunities, and optimisation potential. Bonus points on developing a kernel for Iris XE.</p>
+<h2 id="understanding-of-draggan">Understanding of DragGAN</h2>
+<p>I will now dump my understanding of DragGAN in this section.
+The functionality provided by DragGAN can be described theoretically, as calling out specific intentional high-level commads to drag the image through the manifold, or transalte it to a specific point on it manifold. The &lsquo;commands&rsquo; are given using the mouse cursor to place a point p on the image called the handle point, and a target point t, and have DragGaAN change the image so that p is able to reach t while maintaining visual quality and identity of the image. FOr example, take an image of a human face, if we place the point p on the nose, and t on the right cheek, it will not just drag the nose to that point in a Photoshop kind of way, it will turn the entire face to look in the right direction, making the point p on the nose reach t</p>
+<p>Now that I have covered what DragGAN does, lets cover how it does all this. DragGAn is built on top of the StyleGAN. Actually, saying on top of is misleading, its more like DragGAN, utlizes the SyleGAN and its feature maps in every step. Lets break it down.</p>
+<ol>
+<li>User uploads an image, and we use an inverter or optimisation algorithms to fetch the <em>w</em> code</li>
+<li>The user picks handle point and target point</li>
+<li>Using motion supervised patch loss, the <em>w</em> code is changed, so that the resuting image has slightly changed in desired way.</li>
+<li>Use the 6th block of StyleGAN to capture the new handle point p, using a nearest neighbours algorithm</li>
+<li>Go to 3, until the condition of p~=t is satisfied</li>
+</ol>
+<p>The authors mentioned that for the motion supervised patch loss, backpropogation is not taken through one of the terms, essentially detaching it from the computational graph, rendering it a constant.</p>
+<h2 id="implementation-plan">Implementation Plan</h2>
+<ol>
+<li>The first thing we require is a trained Style GAN. DragGAN authors used StyeGAN-2 but further variants have come along. I will use StyleGAN-2 to start, and use StyleGAN-3 later if I see any requirement for it.</li>
+<li>Once I have a StyleGAN, I will use random <em>z</em> samples to generate images, and try to implement DRagGAN on that. For now, we operate in <em>W</em> space rather than the recommended <em>W+</em> space.</li>
+<li>The flow seems simple enough, generate a <em>z</em> code, use trained StyleGAN to take it to <em>W</em> space, compute feature maps until the 6th block with gradient watch, calculate the loss function, take the gradient of loss function w.r.t <em>W</em>, use Adam optimizer to change the <em>w</em> code slightly, recompute the 6th block, use nearest-neighbours algorith to find new handle point, and repeat the process until |p - t| &lt; d, where d is an arbitary threshold</li>
+<li>Once that is done, and the optimal <em>w</em> code has been fetched, generate the new image</li>
+</ol>
+<h2 id="self-constraints">Self-constraints</h2>
+<p>In order to make this a learning experience, I will place the following constraints on myself</p>
+<ul>
+<li>No looking at the source code</li>
+<li>Use JAX to implement the model</li>
+<li>Only use LLMs to search for a certain functionalities and how to use it, or generate snippets of code not related to architecture. Never to write full functions or architectures</li>
+<li>Debugging should be attempted manually at first, if not successfull after multiple tries, then use LLMs to debug</li>
+</ul>
+<h2 id="execution">Execution</h2>
+<p>Now that I have a high-level overview documented, I will start writing the code. IN this section, I will document my journey of writing code, including the errors, blockers, challenges, successes, observations, ideas, etc.</p>
+<h3 id="using-jax">Using JAX</h3>
+<p>I have next to no knowledge of JAX, but I believe in the learn by doing ideology, so no better way to learn a framework, than to develop a complex project.
+First things first, I need to get an introductory overview of JAX, for which I will read the documentation&hellip;
+Went through some of the documentation, learnt quite a lot. There is still quite some material to go through, but I can go through those as per requirement when I hit a blocker or unfamilar topic during implementation</p>
+<h3 id="fnding-and-using-a-trained-stylegan">Fnding and using a trained StyleGAN</h3>
+<p>As mentioned before, I will be using a trained StyleGAN-2. I doubt if I&rsquo;ll find one in JAX, but luckily, JAX provides a functionality to port models from Pytorch to JAX, so all I have to do is find a trained model in PyTorch.
+Ok so I found a model whch was already implemented in JAX and I went with that, however, the repository had implemented the model using Flax.linen, and there was no way to intercept or get the feature map of the ntermeditate 6th block, so I rewrote the Synthesis network, and added that functionality, along with porting the linen models to the new nnx API. The implemntation is very crude, and God is cruel, for I am forced to maintain this horrible re-implementation in my codebase, because, for some obscure reason, I dont see any methods to save nnx models with a serialized architecture, which means that I am forced to use the class of the model as a blueprint in order to load the saved model. These are the times when I miss tensorflow and its &lsquo;serialize everything you see&rsquo; philosophy. I am sure there is some clever workaround, but for the time being I will stick with this. Hopefully, I am able to get rid of the <code>build_nnx_generator.py</code> script completely, and instead have an optimised elegant way of fetching the blueprint, but this steaming embarrasment of a script shall forever remain in my commit history, as a reminder that impatience is a blight upon anything engineering.
+While writing the code the get feature maps, I noticed a problem, the feature_map list was being treated as a global list for a single model, meaning that for every call, the fetaure maps were being appended in the same list, not creating a new list or dimension. In hindsight, this should have been obvious, I am declaring the outputs list as an attribute in the init function, so the model wil retain its value throughout its lifetime. It was a dumb mistake, but I am glad I caught it early</p>
+<h3 id="analysing-feature-maps">Analysing feature maps</h3>
+<p>I wrote a script to take mean of feature maps to produce a grayscale image. A preliminary overview of the mean tells me that the 6th block in ffhq highlights the crude facial features, while the 7th block highlights more fine features. I am thinking of using mode, median, max and min instead of mean to see other statistics of the feature maps. Max and min should most likely lead to completely white and black images respectively, but I am interested to see if any patterns emerge. As they say a fool may try stupid things, but only a greater fool would not try anything at all. &hellip; Yes I just made up this quote to justify doing what can only seem to be a useless experiment.</p>
+<p>The experiment was in fact not useless, wierdly enough, when I take max/min instead of mean, the resulting gray image still has a striking pattern in the sense that the face and all of its features are clearly visible. Oh one thing I think I forgot to mention is that I have used this script for ffhq dataset, which are 1024x1024 images of faces. Coming back to my point, using what I suspected to be the anomaly statistics led to pretty similar results to the mean. It would be one thing if this only happened in the feature map images where max was taken (henceforth reffered to as the max_image), I would attribute to the max being so much larger that it tipped the mean completely towards itself, but the same phenomenon is observed in min. Another wierd thing that I noticed in these images but I think can be explained, is that the min images are primarily white in color, except for the important face features, which are in black. (If you are not familiar with computer vision and are confused about why I am confused about this, its because in grayscale images, a black pixel has the numerical value of 0 and a white pixel of 255, due to which I was expecting the min_images to be mostly black and max_images to mostly white). I think this is an effect of the normalisation that I am doing to get the image arrays in the range of [0,1]. FOr example, to obtain a max_image, I basically take a feature map stack, I then take the max of a single pixel location across all the feature maps, and make that the value of the single pixel. Doing this gives me a 2 dimensional unnormalised array. So I normalise it to [0,1], uding a process which can be geometrically described as squishing the numbers. You can just look at this code line to understand <code>normalised_data = (data - min(data))/(max(data) - min(data))</code>.
+What happens here is that the feature map stack focuses on some features (pixel clusters) so specifically, they have an extremely large value, so when normalisation occurs, their value becomes very small, going towards 0, leading to max_imag being mostly black/dark, now to figure out the same for min_images. Min_images are mostly white, and they are like a negative version of the max_images, the same features that were highlighted as white in the max_images, are highlighted as dark in the min_images. So how does this happen? Min_image arrays will be have very small max and mins (highly negative) so subtracting anything with min would make it bigger, while the features with high values&hellip; would have to be pretty negative if they are gonna be black. Wait but why. I am confused, but I dont want to spend more time on this at the moment, but this definitely warrants a thorough investigation. Right now I am thinking about how I want to take a single feature map off the stack and analyse it visually, and also see the distribution of a single pixel across the entire stack. Lets move on with implementation</p>
+<h3 id="implementing-motion-supervision-loss">Implementing Motion supervision loss</h3>
+<p>Implementing the motion supervised loss was fairly straightforward, but ofcourse I made some &hellip; choices to uncomplicate the function. For starters when I read the paper it said that patch should consist of all the points at distance less than r1 from p, I assumed that this was talking about the Euclidean distance from p, and I would have to calculate all the points that speicfy that criteria and loop over them, which seemed computationally inefficient, and a pain to implement, so I opted to instead think of the patch as a circle inscribed inside the square I am able to use the corners of the square to easily implement a double for loop getting all the required points. I am probably adding a few extra points because of this method but that is fine, wouldnt make much of a difference. For some reson I assumed that jax would not have a function to resize a n-channel feature map stack via bilnear interpolation, and I set off to implement my own. I was too excited to get results to study bilinear interpolation and implement it from scratch, so I used someone&rsquo;s code from GitHub (Dont remember who, but i remember seeing a MIT license), but then soon after I realized that jax.image.resize works for any number of channels, so used that one instead. To stop gradient flow from first term, I really didnt know what to do. My first thought was that I should implement the loss function such that the first term is treated as a constant, but the gradient of the second term is appropriately influenced by the value of the first term. However, that proved to be a vain effort. So, not wanting to scour hundreds of pages of documentation, I googled what decorator/function would help with this, but then the AI overview popped up, and told me to use jax.lax.stop_gradient. Since the surprise was alreaady spoiled for me, I went ahead and used this to get the job done. And yes, the authors said that they used bilinear interpolation to get f(q+d), since d is a float. That did not make sense to me at first so I simply used the sign of d, to get q + d, which feels like a fair approximation to bilinear approximation now that I have learnt it. Ofcourse I have also changed the implementation to actually use bilinear interpolation now. Another thing I want to point out is that the standard way you compute gradients in jax/flax is that you wrap your loss-computing function in the grad function, and use that to get the grads. Actually loss-computing function is wrong, more like the forward pass, as typical backprop requires recording of all the operations executed to get the output, and then the loss computation. So I wrote a method called <code>get_dltatent_loss</code> (Yes the naming is contradictory to what I just said, I will change it) to take dlatents (w_code) as an argument, (among other things) and compute the motion supervision loss. At this point I did not implement the mask loss, even the motion supervision patch loss was implemented only for a single point. The StyleGan generator network has been instantiated as an attribute of the DragGan model, so there is no requirement to pass it in arguments. I then used the gradients to update the dlatents, finishing the optimisation step implemntation as well</p>
+<h3 id="implementaion-of-point-tracking">Implementaion of point tracking</h3>
+<p>Implementing this algorithm was easy, its simply a nearest neighbours search, but it was excpetionally slow. Like the motion supervision loss, I initially implemented the point tracking algorithm with a naive double for loop. Another thing that confused me was whether I should recompue/ reassign the value of F&rsquo; with eah iteration. Ofcourse I was already computing the feature map in motion supervision loss step, so I would simply assign it as  a attribute of the model and re-use it in the point tracking step, but that threw a tracing error as motion supervision was being used in grads, so I instead returned it as an auxiallary data, and then assigned it outside of the gradient step. I made a few errors, such as forgetting about the batch dimension in the zero axis leading to confusing results (jax does not throw &lsquo;index out of bound&rsquo; errors so one has to careful in how they index). Anyways, since the paper did not elaborate on whether to recompute F&rsquo; or reuse the first feature map computed, I decided to use the official implementation as reference. However, since I did not want to look at the code (As part of the constraints), I instead asked gemini to scan the offical codebase, and answer this question. It told me to recompute F&rsquo;everytime, I asked it to verify and the answer was the same. However, later when I asked Claude the same question, it told me to reuse, and didnt move from its stand even after I pushed back (yayy no sycophancy). Perhaps it was my own bias for less computatin, but the latter seemed correct to me logically, so I went with that. Further more, I realised I dont need to pass the whole feature map, but rather only he values of feature map at the point(s) p, so I did just that, and viola, the entire algorithm is complete. Putting together the loop was a trivial step, so I won&rsquo;t outline it separately.</p>
+<h3 id="debugging-and-improving-performance">Debugging and Improving Performance</h3>
+<p>After trying out the DragGAN for a few iteration on my pc, the speed seemed supbar (For a cpu that is), so I chose to focus on quality first. The first issue I noticed was that while doing a pointwise manipulation on an image of a man, (the pointwise manipulation was to drag the smile down) the style specific attributes such as age, face structure, beard density were changing as well. As I tried to figure this out, I realised that the authors had mentioned that the work in W+ space, which I had not accounted for in my algorithm. To put it more simply, the disentangled latents work as style embeddings in each convolutional layer of StyleGan&rsquo;s generator. So in case of StyleGan2, there are 18 convolutional layers, and we would inject the dlatent code into each layer. The authors suggest that when updating the dlatent code, you should only update it for the first 6 layers, as they change more low-level attributes, while the later layers are more responsible for the style specific attributes. So I implemented that by discarding the updates to the later layers in the optimisation step. This one change helped quite a lot, the stylegan now accurately performs point-wise manipulation. I do notice artifacts, disfigurations and warps coming sometimes. For the time-being I will extend the algorithm to work for multiple points.</p>
+<p>After adding that capability, I noticed a massive drop in speed, even in GPU. I tried using vmap as well, to vectorize the calculation for a single point to fit all points, but that just made it slower imo. Here I was confused, so I asked how to speed up the algorithm in gemini. It pointed out that for loops are not really gpu optimisedm so then I rewrote the algorithm, for both motion supervision and point tracking to leverage a 3d grid of shape (2r+1)x(2r+1)x(n_points), and perform all required calculations on this 3d grid. It worked beautifully, the speed increased by ~150%. The next thing I did was reimplement the StyleGan code, as I had mentioned I would do earlier. So what I did was analyse the shapes of the weights given in the h5 files by matthias wright, and also analysed his code, and implemented my own variant in flax.nnx. I followed a specific pattern for implementing the Mapping Network and Synthesis Layer. The remaining models were pretty much the same as in linen, so I just asked Gemini to generate this code in the same pattern as mine.
+This re-implemntation allowed me to get rid of a bunch of if statements and conditionals in the code, and I also leanred about truncation_psi. Apparently, it is a way to curb the presence of artifacts and disfiguratins in the image by moving the disentangled code produced by the mapping network more towards the average. After using this, I noticed a drop in disfiguration and artifacts in generated images.</p>
+<h3 id="implementation-of-mask-loss">Implementation of Mask Loss</h3>
+<p>This was fairly straightforward, I delegated the task of building the gui for drawing a mask to Gemini, while I implemented the mask loss. The authors specify using L1 norm, which I do use, over the last axis. After which I take the sum of the norm, multiply it by lambda=20, and add it to the motion supervision loss. My only concern was that mask loss was too big a value, but when I used mean instead of sum, it was like the mask loss played no effect on thegraidents. So instead I divided the sum by the sum(1-mask), so its the sum of the actual values that are allowed to pass through. This seemed to work</p>
+<h2 id="experiments-and-failure-mode-analysis">Experiments and failure mode analysis</h2>
+<p>I performed a lot of experiments, and observed some failure modes, and identified some areras of potential improvement, that I will explore soon. First of all, the author&rsquo;s heuristic on taking the 6th block for feature map and updating the first 6 layers of W+ seems flaky to me. It might be the most consistent in performance across datasets, but there has got to be a way to find the correct feature map when working on a specific feature, and I think the same can be applied for point tracking, because point tracking is failing badly. When I checked the progress of a single image at each iteration, I noticed that the handle point keep drifting away while the actual feature that it is supposed to be tracking has not moved as much. I wonder if there is something wrong with my implementation though, but I validated everything. I even gave my finished code to Claude and Gemini, gave them the official repositories, and check if my code had any mismatch or faults. Nothing of merit was found in their analysis.
+I tried adding an outward-increasing weightage to the distances grid in point tracking, but that did not seem to help much. Updaying the reference points (old points) via exponential averaging helped a bit, giving a large weight like 0.95 to the original points, so the algorithm didnt lose its structure. I wonder if I can combine the weightage approach and updating of reference points. I also see that sometimes there are bad updates, which could be characterized as very large updates causing overshooting, making the resulting image warbled. When I had compared my code with source code via CLaude, it said that the official implementation used a regularisation loss to where it checked how far the new w_code is from the old w_code. Not sure how that helps, maybe its to make sure the image stays on the manifold, or to prevent large updates. I wonder if we can pin-point the locality of the updates to the w_code, since it is disentangled it should be possible. I will try perform pointwise manipulation on the same image with different truncation_psi&rsquo;s to see how that affects. Update: Nothing worthwile to note.</p>
+<p>Heads up, I just discovered that the point tracking failure is an actual problem faced by multiple people, and there have been follow up papers to improve on this. The good part is that I was close with how I was trying to fix it, some paper called FreeDrag also updated the reference point via a sort of exponential average, but the weight coefficient is dynamically computed at each iteration, and depends on the value of the loss. They also enforce point tracking to only pick points along the 1d line between the taget point and handle point which is smart, dont just look at closer points, make a much tighter constraint. Let me see if there is anything else I can do to improve the point tracking algorithm. For the time being, my focus will be on getting experiments to showcase, and improving the speed of the algorithm.</p>
+
+          </article>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-12 col-lg-3">
+        <div id="stickySideBar" class="sticky-sidebar">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-12 col-lg-9 p-4">
+        
+      </div>
+    </div>
+  </div>
+  <button class="p-2 px-3" onclick="topFunction()" id="topScroll">
+    <i class="fas fa-angle-up"></i>
+  </button>
+</section>
+
+
+<div class="progress">
+  <div id="scroll-progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+<Script src="/js/scrollProgressBar.js"></script>
+
+
+<script>
+  var topScroll = document.getElementById("topScroll");
+  window.onscroll = function() {scrollFunction()};
+
+  function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      topScroll.style.display = "block";
+    } else {
+      topScroll.style.display = "none";
+    }
+  }
+
+  function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
+
+  
+  let stickySideBarElem = document.getElementById("stickySideBar");
+  let stickyNavBar =  false ;
+  if(stickyNavBar) {
+    let headerElem = document.getElementById("profileHeader");
+    let headerHeight = headerElem.offsetHeight + 15;
+    stickySideBarElem.style.top = headerHeight + "px";
+  } else {
+    stickySideBarElem.style.top = "50px";
+  }
+</script>
+
+
+
+
+  </div><footer>
+    
+ 
+
+<div class="text-center pt-2">
+    
+
+    
+
+    
+
+    
+
+    
+</div></footer><script src="/bootstrap-5/js/bootstrap.bundle.min.js"></script>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+        document.documentElement.classList.remove('dark');
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('dark');
+    }
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            document.documentElement.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
+</script>
+
+
+    <script src="/js/search.js"></script>
+
+
+
+
+
+<!-- MathJax -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" integrity="sha384-M5jmNxKC9EVnuqeMwRHvFuYUE8Hhp0TgBruj/GZRkYtiMrCRgH7yvv5KY+Owi7TW" crossorigin="anonymous"></script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\[','\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+        TeX: { equationNumbers: { autoNumber: "AMS" },
+             extensions: ["AMSmath.js", "AMSsymbols.js"] }
+      }
+    });
+</script>
+
+
+
+
+
+
+
+
+  <section id="search-content" class="py-2">
+    <div class="container" id="search-results"></div>
+  </section>
+</body>
+
+</html>
